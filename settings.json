@@ -4,7 +4,7 @@
   "api": "${ZERO_CODE_API_BASE_URL}",
   "customSecurity": {
     "useCustomSecurity": true,
-    "baseUrl": "${CUSTOM_SECURITY_BASE_URL}",
+    "baseUrl": "${UI_CUSTOM_SECURITY_BASE_URL}",
     "loginType": "url",
     "loginEndpoint": "/oauth2/login",
     "pingEndpoint": "/oauth2/ping",
