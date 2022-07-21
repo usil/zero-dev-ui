@@ -1,0 +1,62 @@
+<h2 mat-dialog-title>Create Application</h2>
+<form
+  [formGroup]="createApplicationForm"
+  (ngSubmit)="createApplication(createApplicationForm.value)"
+>
+  <div mat-dialog-content>
+    <div class="error-display" *ngIf="errorMessage">
+      <h5>{{ errorMessage }}</h5>
+    </div>
+    <mat-form-field class="forms-field" appearance="fill">
+      <mat-label>Name</mat-label>
+      <input
+        matInput
+        placeholder="New App"
+        formControlName="name"
+        name="name"
+        required
+      />
+      <mat-hint>Application name</mat-hint>
+    </mat-form-field>
+    <mat-form-field class="forms-field" appearance="fill">
+      <mat-label>Version</mat-label>
+      <input
+        matInput
+        placeholder="1.0.0"
+        formControlName="version"
+        name="version"
+        required
+      />
+      <mat-hint>Application version</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field class="forms-field" appearance="fill">
+      <mat-label>Port</mat-label>
+      <input
+        matInput
+        placeholder="4200"
+        formControlName="port"
+        name="port"
+        required
+      />
+      <mat-hint>Application PORT</mat-hint>
+    </mat-form-field>
+  </div>
+  <div align="end" mat-dialog-actions>
+    <button
+      (click)="closeDialog()"
+      type="button"
+      color="warn"
+      mat-stroked-button
+      [disabled]="dialogRef.disableClose"
+    >
+      Cancel</button
+    ><button
+      [disabled]="!createApplicationForm.valid"
+      color="primary"
+      mat-flat-button
+    >
+      Create
+    </button>
+  </div>
+</form>

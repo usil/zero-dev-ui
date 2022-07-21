@@ -1,0 +1,93 @@
+<div class="dashboard-container" [class.mobile]="mobileQuery.matches">
+  <mat-toolbar color="accent" class="toolbar">
+    <button mat-icon-button (click)="snav.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <h1 class="app-name">{{ title }}</h1>
+    <span class="spacer"></span>
+    <button
+      mat-button
+      [matMenuTriggerFor]="menu"
+      aria-label="Example icon-button with a menu"
+    >
+      {{ username }}
+    </button>
+    <mat-menu #menu="matMenu">
+      <button
+        *ngIf="customSecurity.useCustomSecurity === false"
+        (click)="navigateTo('/dashboard/profile')"
+        mat-menu-item
+      >
+        <mat-icon>account_circle</mat-icon>
+        <span>Profile</span>
+      </button>
+      <button (click)="logOut()" mat-menu-item>
+        <mat-icon>dialpad</mat-icon>
+        <span>Log Out</span>
+      </button>
+    </mat-menu>
+  </mat-toolbar>
+
+  <mat-sidenav-container class="sidenav-container-main">
+    <mat-sidenav
+      #snav
+      [mode]="mobileQuery.matches ? 'over' : 'side'"
+      [fixedInViewport]="mobileQuery.matches"
+      fixedTopGap="56"
+      class="side-nav"
+    >
+      <div class="list-container">
+        <div
+          (click)="navigateTo('/dashboard/applications')"
+          class="expansion-element"
+        >
+          <mat-icon class="icon-expansion">business</mat-icon>
+          <span>Applications</span>
+          <span class="exp-spacer"></span>
+        </div>
+      </div>
+      <div class="list-container">
+        <div
+          (click)="navigateTo('/dashboard/subjects')"
+          class="expansion-element"
+        >
+          <mat-icon class="icon-expansion">contacts</mat-icon>
+          <span>Subjects</span>
+          <span class="exp-spacer"></span>
+        </div>
+      </div>
+      <div
+        *ngIf="isAdminUser && customSecurity.useCustomSecurity === false"
+        class="list-container"
+      >
+        <div (click)="authPanelOpen = !authPanelOpen" class="expansion-element">
+          <mat-icon class="icon-expansion">lock</mat-icon>
+          <span>Auth</span>
+          <span class="exp-spacer"></span>
+          <div class="arrow">
+            <mat-icon>keyboard_arrow_down</mat-icon>
+          </div>
+        </div>
+        <div [ngClass]="{ occult: !authPanelOpen }" class="expand-content">
+          <mat-selection-list class="list-exp" [multiple]="false">
+            <mat-list-option
+              class="routes-list"
+              *ngFor="let route of routesList"
+              routerLinkActive="mat-list-single-selected-option"
+            >
+              <a mat-list-item [routerLink]="route.path"
+                ><mat-icon class="expansion-icon">{{ route.icon }}</mat-icon
+                ><span>{{ route.name }}</span></a
+              >
+            </mat-list-option>
+          </mat-selection-list>
+        </div>
+      </div>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <section class="main-dashboard">
+        <router-outlet></router-outlet>
+      </section>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

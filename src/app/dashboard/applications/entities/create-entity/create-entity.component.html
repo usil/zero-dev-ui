@@ -1,0 +1,324 @@
+<div class="title-zc">
+  <h3 *ngIf="application">Creating an entity for {{ application.name }}</h3>
+  <span class="spacer"></span>
+</div>
+<div class="error-display" *ngIf="errorMessage">
+  <h5>{{ errorMessage }}</h5>
+</div>
+<form
+  (ngSubmit)="createEntity(createEntityForm.value)"
+  [formGroup]="createEntityForm"
+  class="creation-forms"
+>
+  <mat-form-field class="span-3" appearance="fill">
+    <mat-label>Name</mat-label>
+    <input formControlName="name" matInput />
+    <mat-hint>The entity name</mat-hint>
+    <mat-error *ngIf="createEntityForm.get('name')?.invalid">{{
+      getErrorMessage("name")
+    }}</mat-error>
+  </mat-form-field>
+  <mat-form-field class="span-3" appearance="fill">
+    <mat-label>Icon</mat-label>
+    <input formControlName="icon" matInput />
+    <mat-hint>What icon use</mat-hint>
+    <mat-error *ngIf="createEntityForm.get('icon')?.invalid">{{
+      getErrorMessage("icon")
+    }}</mat-error>
+  </mat-form-field>
+
+  <!-- <mat-form-field class="span-6" appearance="fill">
+    <mat-label>Subjects that can access this entity</mat-label>
+    <mat-chip-list #chipList aria-label="Fruit selection">
+      <mat-chip
+        color="accent"
+        *ngFor="let subject of currentSubjects"
+        (removed)="remove(subject)"
+      >
+        {{ subject.identifier }}
+        <button matChipRemove>
+          <mat-icon>cancel</mat-icon>
+        </button>
+      </mat-chip>
+      <input
+        placeholder="Subjects..."
+        #subjectInput
+        formControlName="subjects"
+        [matAutocomplete]="auto"
+        [matChipInputFor]="chipList"
+        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+        (matChipInputTokenEnd)="add($event)"
+      />
+    </mat-chip-list>
+    <mat-autocomplete
+      #auto="matAutocomplete"
+      (optionSelected)="selected($event)"
+    >
+      <mat-option
+        *ngFor="let subject of filteredSubjects | async"
+        [value]="subject"
+      >
+        {{ subject.identifier }}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field> -->
+
+  <div formArrayName="subjects_crud" class="span-6">
+    <div
+      *ngFor="let sub of subjectsCrudFormArray.controls; index as i"
+      textIndex="i"
+    >
+      <div class="key-value-form" [formGroupName]="i">
+        <mat-form-field appearance="fill">
+          <mat-label>Subject</mat-label>
+          <mat-select formControlName="subject">
+            <mat-option *ngFor="let subject of subjects" [value]="subject">{{
+              subject.identifier
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>CRUD permission</mat-label>
+          <input formControlName="crudExtension" matInput />
+        </mat-form-field>
+
+        <button
+          (click)="removeSubjectCrud(i)"
+          class="remove-btn"
+          color="warn"
+          mat-flat-button
+          type="button"
+          [disabled]="subjectsCrudFormArray.length === 1"
+        >
+          Remove
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <button
+    (click)="addSubjectCrud()"
+    type="button"
+    color="primary"
+    mat-stroked-button
+    class="span-6"
+  >
+    Add Subject
+  </button>
+
+  <mat-form-field class="span-6" appearance="fill">
+    <mat-label>Data origin</mat-label>
+    <mat-select formControlName="data_origin">
+      <mat-option
+        *ngFor="let dataOrigin of dataOrigins"
+        [value]="dataOrigin.value"
+        >{{ dataOrigin.showValue }}</mat-option
+      >
+    </mat-select>
+    <mat-hint>Select the data origin</mat-hint>
+    <mat-error *ngIf="createEntityForm.get('dataOrigin')?.invalid">{{
+      getErrorMessage("dataOrigin")
+    }}</mat-error>
+  </mat-form-field>
+
+  <div *ngIf="currentDataOrigin === 'external'" class="span-6 creation-forms">
+    <h4 class="span-6">REST configuration</h4>
+
+    <mat-form-field class="span-3" appearance="fill">
+      <mat-label>Url</mat-label>
+      <input formControlName="url" matInput />
+      <mat-hint>The url to get all items</mat-hint>
+      <mat-error *ngIf="createEntityForm.get('url')?.invalid">{{
+        getErrorMessage("url")
+      }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="span-3" appearance="fill">
+      <mat-label>Primary Key</mat-label>
+      <input formControlName="primaryKey" matInput />
+      <mat-hint>The primary key for of the external data</mat-hint>
+      <mat-error *ngIf="createEntityForm.get('primaryKey')?.invalid">{{
+        getErrorMessage("primaryKey")
+      }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="span-3" appearance="fill">
+      <mat-label>Get One Json Path</mat-label>
+      <input formControlName="getOneJsonPath" matInput />
+      <mat-hint>The path to the data when getting one record</mat-hint>
+      <mat-error *ngIf="createEntityForm.get('getOneJsonPath')?.invalid">{{
+        getErrorMessage("getOneJsonPath")
+      }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="span-3" appearance="fill">
+      <mat-label>Get Error Message Json Path</mat-label>
+      <input formControlName="errorJsonPath" matInput />
+      <mat-hint
+        >The path to get the error message when an error occurs</mat-hint
+      >
+      <mat-error *ngIf="createEntityForm.get('errorJsonPath')?.invalid">{{
+        getErrorMessage("errorJsonPath")
+      }}</mat-error>
+    </mat-form-field>
+
+    <h5 class="span-6">Pagination Config</h5>
+
+    <mat-form-field class="span-3" appearance="fill">
+      <mat-label>Get pagination items json path</mat-label>
+      <input formControlName="itemsJsonPath" matInput />
+      <mat-hint>The path to the items of the pagination</mat-hint>
+      <mat-error *ngIf="createEntityForm.get('itemsJsonPath')?.invalid">{{
+        getErrorMessage("itemsJsonPath")
+      }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="span-3" appearance="fill">
+      <mat-label>Get pagination total items</mat-label>
+      <input formControlName="totalItemsJsonPath" matInput />
+      <mat-hint>The path to the total items of the pagination</mat-hint>
+      <mat-error *ngIf="createEntityForm.get('totalItemsJsonPath')?.invalid">{{
+        getErrorMessage("totalItemsJsonPath")
+      }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="span-2" appearance="fill">
+      <mat-label>Send pagination info in</mat-label>
+      <mat-select formControlName="sendPaginationInfoIn">
+        <mat-option
+          *ngFor="let paginationInfoOption of paginationInfoInOptions"
+          [value]="paginationInfoOption.value"
+          >{{ paginationInfoOption.showValue }}</mat-option
+        >
+      </mat-select>
+      <mat-hint>Where to send the pagination info</mat-hint>
+      <mat-error
+        *ngIf="createEntityForm.get('sendPaginationInfoIn')?.invalid"
+        >{{ getErrorMessage("sendPaginationInfoIn") }}</mat-error
+      >
+    </mat-form-field>
+
+    <mat-form-field class="span-2" appearance="fill">
+      <mat-label>Page index field</mat-label>
+      <input formControlName="pageIndexField" matInput />
+      <mat-hint>The name of the variable to send the page index</mat-hint>
+      <mat-error *ngIf="createEntityForm.get('pageIndexField')?.invalid">{{
+        getErrorMessage("pageIndexField")
+      }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="span-2" appearance="fill">
+      <mat-label>Items per page field</mat-label>
+      <input formControlName="itemsPerPageField" matInput />
+      <mat-hint>The name of the variable to send the items per page</mat-hint>
+      <mat-error *ngIf="createEntityForm.get('itemsPerPageField')?.invalid">{{
+        getErrorMessage("itemsPerPageField")
+      }}</mat-error>
+    </mat-form-field>
+
+    <h5 class="span-6">Headers</h5>
+
+    <div formArrayName="headers" class="span-6">
+      <div
+        *ngFor="let sub of headersFormArray.controls; index as i"
+        textIndex="i"
+      >
+        <div class="key-value-form" [formGroupName]="i">
+          <mat-form-field appearance="fill">
+            <mat-label>Key</mat-label>
+            <input formControlName="key" matInput />
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>Value</mat-label>
+            <input formControlName="value" matInput />
+          </mat-form-field>
+          <button
+            (click)="removeHeaderPair(i)"
+            class="remove-btn"
+            color="warn"
+            mat-flat-button
+            type="button"
+          >
+            Remove
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <button
+      (click)="addHeaderPair()"
+      type="button"
+      color="primary"
+      mat-stroked-button
+      class="span-6"
+    >
+      Add header
+    </button>
+
+    <h5 class="span-6">Query url params</h5>
+
+    <div formArrayName="queryUrlParams" class="span-6">
+      <div
+        *ngFor="let sub of queryUrlFormArray.controls; index as i"
+        textIndex="i"
+      >
+        <div class="key-value-form" [formGroupName]="i">
+          <mat-form-field appearance="fill">
+            <mat-label>Key</mat-label>
+            <input formControlName="key" matInput />
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>Value</mat-label>
+            <input formControlName="value" matInput />
+          </mat-form-field>
+          <button
+            (click)="removeUrlQueryParamPair(i)"
+            class="remove-btn"
+            color="warn"
+            mat-flat-button
+            type="button"
+          >
+            Remove
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <button
+      (click)="addUrlQueryParamPair()"
+      type="button"
+      color="primary"
+      mat-stroked-button
+      class="span-6"
+    >
+      Add query param
+    </button>
+
+    <section class="span-6">
+      <!-- <mat-checkbox class="checkbox-margin">Use Oauth2</mat-checkbox> -->
+      <mat-checkbox formControlName="use_query_endpoint" class="checkbox-margin"
+        >Use query endpoint</mat-checkbox
+      >
+      <h6>To need to follow the how to create query tutorial</h6>
+    </section>
+
+    <mat-form-field class="span-6" appearance="fill">
+      <mat-label>Query endpoint</mat-label>
+      <input formControlName="query_url" matInput />
+      <mat-hint>The endpoint to realize the query</mat-hint>
+      <mat-error *ngIf="createEntityForm.get('query_url')?.invalid">{{
+        getErrorMessage("query_url")
+      }}</mat-error>
+    </mat-form-field>
+  </div>
+  <button
+    [disabled]="createEntityForm.invalid || creating"
+    type="submit"
+    class="span-6"
+    color="accent"
+    mat-flat-button
+  >
+    Create Entity
+  </button>
+</form>

@@ -1,0 +1,68 @@
+<h2 mat-dialog-title>Entity Subjects</h2>
+<form
+  (ngSubmit)="updateEntitySubjects(editEntitySubjectsForm.value)"
+  *ngIf="subjectsCrudFormArray"
+  [formGroup]="editEntitySubjectsForm"
+>
+  <div formArrayName="subjects_crud" class="span-6">
+    <div
+      *ngFor="let sub of subjectsCrudFormArray.controls; index as i"
+      textIndex="i"
+    >
+      <div class="key-value-form" [formGroupName]="i">
+        <mat-form-field class="forms-field" appearance="fill">
+          <mat-label>Subject</mat-label>
+          <mat-select formControlName="subject">
+            <mat-option *ngFor="let subject of subjects" [value]="subject.id">{{
+              subject.identifier
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="forms-field" appearance="fill">
+          <mat-label>CRUD permission</mat-label>
+          <input formControlName="crudExtension" matInput />
+        </mat-form-field>
+
+        <button
+          (click)="removeSubjectCrud(i)"
+          class="forms-field"
+          color="warn"
+          mat-flat-button
+          type="button"
+          [disabled]="subjectsCrudFormArray.length === 1"
+        >
+          Remove
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <button
+    (click)="addSubjectCrud()"
+    type="button"
+    color="primary"
+    mat-stroked-button
+    class="forms-field"
+  >
+    Add Subject
+  </button>
+
+  <div align="end" mat-dialog-actions>
+    <button
+      (click)="closeDialog()"
+      type="button"
+      color="warn"
+      mat-stroked-button
+      [disabled]="dialogRef.disableClose"
+    >
+      Close</button
+    ><button
+      [disabled]="!editEntitySubjectsForm.valid || creating"
+      color="primary"
+      mat-flat-button
+    >
+      Update
+    </button>
+  </div>
+</form>

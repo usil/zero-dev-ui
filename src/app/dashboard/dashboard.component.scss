@@ -1,0 +1,144 @@
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  .mobile .toolbar {
+    position: fixed;
+    z-index: 10;
+
+    h1.app-name {
+      margin-left: 8px;
+    }
+  }
+
+  .toolbar {
+    & h1.app-name {
+      color: #212121;
+      font-weight: 900;
+    }
+    .mat-icon {
+      color: #212121;
+    }
+    .spacer {
+      flex: 1 1 auto;
+    }
+  }
+
+  .sidenav-container-main {
+    & .mobile {
+      flex: 1 0 auto;
+    }
+    flex: 1;
+  }
+}
+
+.main-dashboard {
+  padding: 3rem;
+}
+
+.side-nav {
+  padding: 2rem 1rem;
+}
+
+.expand-content {
+  padding: 0.5rem 1rem;
+}
+
+.sidenav-container-main ::ng-deep .mat-list-base {
+  padding-top: 0;
+  .mat-list-item {
+    margin: 0.25rem 0;
+    border-radius: 0.25rem;
+    .mat-list-item-content {
+      color: #ff9800;
+      padding: 0 !important;
+    }
+
+    .mat-list-text {
+      .mat-icon {
+        margin-left: 0.5rem;
+      }
+      span {
+        padding: 0 0.5rem;
+      }
+      padding: 0 !important;
+    }
+    &:hover {
+      background-color: rgba(233, 233, 233, 0.068);
+    }
+    &.mat-list-single-selected-option {
+      background-color: rgba(233, 233, 233, 0.39);
+    }
+    min-width: 180px !important;
+
+    text-decoration: none;
+  }
+}
+
+.side-nav {
+  background-color: #212121;
+  color: #ff9800;
+}
+
+.forms-field {
+  width: 100%;
+}
+.input-container .mat-form-field + .mat-form-field {
+  margin-left: 8px;
+}
+
+.input-right-align {
+  text-align: right;
+}
+
+input.input-right-align::-webkit-outer-spin-button,
+input.input-right-align::-webkit-inner-spin-button {
+  display: none;
+}
+
+input.input-right-align {
+  -moz-appearance: textfield;
+}
+
+.actions {
+  margin-top: 1rem;
+}
+
+.list-container {
+  margin: 0.25rem 0;
+  border-radius: 0.25rem;
+  .occult {
+    display: none;
+  }
+  .exp-spacer {
+    flex: 1;
+  }
+  .expansion-element {
+    min-width: 240px;
+    &:hover {
+      background-color: rgba(233, 233, 233, 0.068);
+      cursor: pointer;
+    }
+    height: 48px;
+    span {
+      padding: 0 0.5rem;
+    }
+    .mat-icon {
+      margin-left: 0.5rem;
+    }
+    .arrow {
+      .mat-icon {
+        margin-left: 0rem;
+        margin-right: 0.5rem;
+      }
+      display: flex;
+    }
+    display: flex;
+    align-items: center;
+  }
+}

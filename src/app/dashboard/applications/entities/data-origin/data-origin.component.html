@@ -1,0 +1,269 @@
+<h2 mat-dialog-title>{{ entity.name }} data origin</h2>
+<div class="error-display" *ngIf="errorMessage">
+  <h5>{{ errorMessage }}</h5>
+</div>
+<form
+  (ngSubmit)="updateEntityExternalDataOrigin(dataOriginForm.value)"
+  *ngIf="dataOriginForm"
+  [formGroup]="dataOriginForm"
+>
+  <mat-form-field class="forms-field" appearance="fill">
+    <mat-label>Data origin type</mat-label>
+    <mat-select formControlName="type">
+      <mat-option
+        *ngFor="let dataOrigin of dataOrigins"
+        [value]="dataOrigin.value"
+        >{{ dataOrigin.showValue }}</mat-option
+      >
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field
+    *ngIf="startDatOriginType === 'external'"
+    class="forms-field"
+    appearance="fill"
+  >
+    <mat-label>Url</mat-label>
+    <input formControlName="url" matInput />
+    <mat-hint>The url to get all items</mat-hint>
+    <mat-error *ngIf="dataOriginForm.get('url')?.invalid">{{
+      getErrorMessage("url")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field
+    *ngIf="startDatOriginType === 'external'"
+    class="forms-field"
+    appearance="fill"
+  >
+    <mat-label>Primary Key</mat-label>
+    <input formControlName="primaryKey" matInput />
+    <mat-hint>The primary key for of the external data</mat-hint>
+    <mat-error *ngIf="dataOriginForm.get('primaryKey')?.invalid">{{
+      getErrorMessage("primaryKey")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field
+    *ngIf="startDatOriginType === 'external'"
+    class="forms-field"
+    appearance="fill"
+  >
+    <mat-label>Get One Json Path</mat-label>
+    <input formControlName="getOneJsonPath" matInput />
+    <mat-hint>The path to the data when getting one record</mat-hint>
+    <mat-error *ngIf="dataOriginForm.get('getOneJsonPath')?.invalid">{{
+      getErrorMessage("getOneJsonPath")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field
+    *ngIf="startDatOriginType === 'external'"
+    class="forms-field"
+    appearance="fill"
+  >
+    <mat-label>Get Error Message Json Path</mat-label>
+    <input formControlName="errorJsonPath" matInput />
+    <mat-hint>The path to get the error message when an error occurs</mat-hint>
+    <mat-error *ngIf="dataOriginForm.get('errorJsonPath')?.invalid">{{
+      getErrorMessage("errorJsonPath")
+    }}</mat-error>
+  </mat-form-field>
+
+  <h5 *ngIf="startDatOriginType === 'external'" class="span-6">
+    Pagination Config
+  </h5>
+
+  <mat-form-field
+    *ngIf="startDatOriginType === 'external'"
+    class="forms-field"
+    appearance="fill"
+  >
+    <mat-label>Get pagination items json path</mat-label>
+    <input formControlName="jsonPathToItems" matInput />
+    <mat-hint>The path to the items of the pagination</mat-hint>
+    <mat-error *ngIf="dataOriginForm.get('jsonPathToItems')?.invalid">{{
+      getErrorMessage("jsonPathToItems")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field
+    *ngIf="startDatOriginType === 'external'"
+    class="forms-field"
+    appearance="fill"
+  >
+    <mat-label>Get pagination total items json path</mat-label>
+    <input formControlName="jsonPathToTotalItems" matInput />
+    <mat-hint>The path to the total items of the pagination</mat-hint>
+    <mat-error *ngIf="dataOriginForm.get('jsonPathToTotalItems')?.invalid">{{
+      getErrorMessage("jsonPathToTotalItems")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field
+    *ngIf="startDatOriginType === 'external'"
+    class="forms-field"
+    appearance="fill"
+  >
+    <mat-label>Send pagination info in</mat-label>
+    <mat-select formControlName="sendPaginationInfoIn">
+      <mat-option
+        *ngFor="let paginationInfoOption of paginationInfoInOptions"
+        [value]="paginationInfoOption.value"
+        >{{ paginationInfoOption.showValue }}</mat-option
+      >
+    </mat-select>
+    <mat-hint>Where to send the pagination info</mat-hint>
+    <mat-error *ngIf="dataOriginForm.get('sendPaginationInfoIn')?.invalid">{{
+      getErrorMessage("sendPaginationInfoIn")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field
+    *ngIf="startDatOriginType === 'external'"
+    class="forms-field"
+    appearance="fill"
+  >
+    <mat-label>Page index field</mat-label>
+    <input formControlName="pageIndexField" matInput />
+    <mat-hint>The name of the variable to send the page index</mat-hint>
+    <mat-error *ngIf="dataOriginForm.get('pageIndexField')?.invalid">{{
+      getErrorMessage("pageIndexField")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field
+    *ngIf="startDatOriginType === 'external'"
+    class="forms-field"
+    appearance="fill"
+  >
+    <mat-label>Items per page field</mat-label>
+    <input formControlName="itemsPerPageField" matInput />
+    <mat-hint>The name of the variable to send the items per page</mat-hint>
+    <mat-error *ngIf="dataOriginForm.get('itemsPerPageField')?.invalid">{{
+      getErrorMessage("itemsPerPageField")
+    }}</mat-error>
+  </mat-form-field>
+
+  <h5 *ngIf="startDatOriginType === 'external'" class="span-6">
+    Query endpoint
+  </h5>
+
+  <mat-form-field
+    *ngIf="startDatOriginType === 'external'"
+    class="forms-field"
+    appearance="fill"
+  >
+    <mat-label>Query endpoint</mat-label>
+    <input formControlName="queryUrl" matInput />
+    <mat-hint>The endpoint to realize the query</mat-hint>
+    <mat-error *ngIf="dataOriginForm.get('queryUrl')?.invalid">{{
+      getErrorMessage("queryUrl")
+    }}</mat-error>
+  </mat-form-field>
+
+  <h5 *ngIf="startDatOriginType === 'external'" class="span-6">Headers</h5>
+
+  <div
+    *ngIf="startDatOriginType === 'external'"
+    formArrayName="headers"
+    class="span-6"
+  >
+    <div
+      *ngFor="let sub of headersFormArray.controls; index as i"
+      textIndex="i"
+    >
+      <div class="key-value-form" [formGroupName]="i">
+        <mat-form-field class="forms-field" appearance="fill">
+          <mat-label>Key</mat-label>
+          <input formControlName="key" matInput />
+        </mat-form-field>
+        <mat-form-field class="forms-field" appearance="fill">
+          <mat-label>Value</mat-label>
+          <input formControlName="value" matInput />
+        </mat-form-field>
+        <button
+          (click)="removeHeaderPair(i)"
+          class="remove-btn forms-field"
+          color="warn"
+          mat-flat-button
+          type="button"
+        >
+          Remove
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <button
+    *ngIf="startDatOriginType === 'external'"
+    (click)="addHeaderPair()"
+    type="button"
+    color="primary"
+    mat-stroked-button
+    class="forms-field"
+  >
+    Add header
+  </button>
+
+  <h5 *ngIf="startDatOriginType === 'external'" class="span-6">
+    Query url params
+  </h5>
+
+  <div *ngIf="startDatOriginType === 'external'" formArrayName="queryUrlParams">
+    <div
+      *ngFor="let sub of queryUrlFormArray.controls; index as i"
+      textIndex="i"
+    >
+      <div class="key-value-form" [formGroupName]="i">
+        <mat-form-field class="forms-field" appearance="fill">
+          <mat-label>Key</mat-label>
+          <input formControlName="key" matInput />
+        </mat-form-field>
+        <mat-form-field class="forms-field" appearance="fill">
+          <mat-label>Value</mat-label>
+          <input formControlName="value" matInput />
+        </mat-form-field>
+        <button
+          (click)="removeUrlQueryParamPair(i)"
+          class="forms-field"
+          color="warn"
+          mat-flat-button
+          type="button"
+        >
+          Remove
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <button
+    *ngIf="startDatOriginType === 'external'"
+    (click)="addUrlQueryParamPair()"
+    type="button"
+    color="primary"
+    mat-stroked-button
+    class="forms-field"
+  >
+    Add query param
+  </button>
+
+  <div align="end" mat-dialog-actions>
+    <button
+      (click)="closeDialog()"
+      type="button"
+      color="warn"
+      mat-stroked-button
+      [disabled]="dialogRef.disableClose"
+    >
+      Close</button
+    ><button
+      *ngIf="dataOrigin.type === 'external'"
+      [disabled]="!dataOriginForm.valid || creating"
+      color="primary"
+      mat-flat-button
+    >
+      Update
+    </button>
+  </div>
+</form>

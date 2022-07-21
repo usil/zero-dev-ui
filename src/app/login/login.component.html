@@ -1,0 +1,101 @@
+<mat-grid-list rowHeight="100vh" gutterSize="20" cols="2">
+  <mat-grid-tile class="login-container">
+    <div
+      *ngIf="
+        (customSecurity.useCustomSecurity === true &&
+          customSecurity.uiConfiguration.type !== 'one-button') ||
+        customSecurity.useCustomSecurity === false
+      "
+      class="login"
+    >
+      <img width="300px" src="assets/usil.png" alt="usil logo" />
+      <h2>Zero Dev | Sign In</h2>
+      <div class="error-display" *ngIf="errorMessage">
+        <h5>{{ errorMessage }}</h5>
+      </div>
+      <form [formGroup]="loginForm" (ngSubmit)="login(loginForm.value)">
+        <mat-grid-list rowHeight="100px" cols="1">
+          <mat-grid-tile>
+            <mat-form-field class="forms-field" appearance="outline">
+              <mat-label>Username</mat-label>
+              <input
+                matInput
+                placeholder="Ej: user001"
+                formControlName="username"
+                name="username"
+                required
+              />
+              <mat-hint>Put your username</mat-hint>
+              <mat-error *ngIf="loginForm.get('username')?.hasError('pattern')"
+                >Only alphanumeric characters
+              </mat-error>
+              <mat-error
+                *ngIf="loginForm.get('username')?.hasError('minlength')"
+                >At least 4 characters.
+              </mat-error>
+            </mat-form-field>
+          </mat-grid-tile>
+          <mat-grid-tile>
+            <mat-form-field class="forms-field" appearance="outline">
+              <mat-label>Password</mat-label>
+              <input
+                formControlName="password"
+                name="password"
+                matInput
+                [type]="hide ? 'password' : 'text'"
+              />
+              <button
+                type="button"
+                mat-icon-button
+                matSuffix
+                (click)="hide = !hide"
+                [attr.aria-label]="'Hide password'"
+                [attr.aria-pressed]="hide"
+              >
+                <mat-icon>{{
+                  hide ? "visibility_off" : "visibility"
+                }}</mat-icon>
+              </button>
+              <mat-hint>Put your password</mat-hint>
+              <mat-error *ngIf="loginForm.get('password')?.hasError('pattern')"
+                >Password should have at least 1 number and 1 uppercase.
+              </mat-error>
+              <mat-error
+                *ngIf="loginForm.get('password')?.hasError('minlength')"
+                >At least 6 characters.
+              </mat-error>
+            </mat-form-field>
+          </mat-grid-tile>
+        </mat-grid-list>
+        <button
+          type="submit"
+          [disabled]="!loginForm.valid"
+          (click)="login(loginForm.value)"
+          type="button"
+          class="login-btn"
+          color="accent"
+          mat-raised-button
+        >
+          Enter
+        </button>
+      </form>
+    </div>
+    <div
+      *ngIf="
+        customSecurity.useCustomSecurity &&
+        customSecurity.uiConfiguration.type === 'one-button'
+      "
+    >
+      <button
+        (click)="executeCustomLogin()"
+        type="button"
+        class="login-btn"
+        color="accent"
+        mat-raised-button
+      >
+        {{ customSecurity.uiConfiguration.buttonText }}
+      </button>
+    </div>
+  </mat-grid-tile>
+  <mat-grid-tile> <div class="presentation"></div> </mat-grid-tile>
+</mat-grid-list>

@@ -1,0 +1,33 @@
+<h2 mat-dialog-title>Update Client {{ subject.identifier }}</h2>
+<form
+  [formGroup]="updateSubjectForm"
+  (ngSubmit)="updateSubject(updateSubjectForm.value)"
+>
+  <div mat-dialog-content>
+    <div class="error-display" *ngIf="errorMessage">
+      <h5>{{ errorMessage }}</h5>
+    </div>
+    <mat-form-field class="forms-field" appearance="fill">
+      <mat-label>Identifier</mat-label>
+      <input matInput formControlName="identifier" name="name" required />
+      <mat-hint>New identifier</mat-hint>
+    </mat-form-field>
+  </div>
+  <div align="end" mat-dialog-actions>
+    <button
+      (click)="closeDialog()"
+      type="button"
+      color="warn"
+      mat-stroked-button
+      [disabled]="dialogRef.disableClose"
+    >
+      Cancel</button
+    ><button
+      [disabled]="!updateSubjectForm.valid || dialogRef.disableClose"
+      color="primary"
+      mat-flat-button
+    >
+      Update
+    </button>
+  </div>
+</form>

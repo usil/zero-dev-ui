@@ -1,0 +1,39 @@
+<h2 mat-dialog-title>Register Subject</h2>
+<form
+  [formGroup]="createSubjectForm"
+  (ngSubmit)="createClient(createSubjectForm.value)"
+>
+  <div mat-dialog-content>
+    <div class="error-display" *ngIf="errorMessage">
+      <h5>{{ errorMessage }}</h5>
+    </div>
+    <mat-form-field class="forms-field" appearance="fill">
+      <mat-label>Identifier</mat-label>
+      <input
+        matInput
+        placeholder="admin01"
+        formControlName="identifier"
+        name="identifier"
+        required
+      />
+      <mat-hint>Client unique identifier</mat-hint>
+    </mat-form-field>
+  </div>
+  <div align="end" mat-dialog-actions>
+    <button
+      (click)="closeDialog()"
+      type="button"
+      color="warn"
+      mat-stroked-button
+      [disabled]="dialogRef.disableClose"
+    >
+      Cancel</button
+    ><button
+      [disabled]="!createSubjectForm.valid"
+      color="primary"
+      mat-flat-button
+    >
+      Register
+    </button>
+  </div>
+</form>

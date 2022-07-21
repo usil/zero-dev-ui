@@ -1,0 +1,85 @@
+.mat-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+.error-display {
+  margin: 1rem 0;
+  background-color: rgba(255, 171, 16, 0.596);
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  h5 {
+    margin: 0;
+    font-size: 16px;
+  }
+}
+
+.key-value-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr 0.125fr;
+  gap: 1.25rem;
+}
+
+.remove-btn {
+  height: 52px;
+}
+
+td,
+th {
+  width: calc((100% - 33px) / 4);
+}
+
+.small-column {
+  width: 32px;
+  border-right: 1px solid rgb(182, 182, 182);
+  padding-right: 24px;
+  text-align: center;
+}
+
+.producer-column {
+  padding-left: 16px;
+}
+
+h3 {
+  margin: 0;
+  margin-bottom: 1rem;
+  color: #1c1c1c;
+}
+
+.mat-radio-button ~ .mat-radio-button {
+  margin-left: 16px;
+}
+q .show-table {
+  margin-top: 2rem;
+}
+
+h4,
+h5 {
+  margin: 0.25rem 0 0.25rem 0;
+}
+
+.creation-forms {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+}
+
+.span-2 {
+  grid-column: span 2;
+}
+
+.span-4 {
+  grid-column: span 4;
+}
+
+.span-3 {
+  grid-column: span 3;
+}
+
+.span-6 {
+  grid-column: span 6;
+}
+
+.checkbox-margin {
+  margin: 0 10px;
+}

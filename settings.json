@@ -1,0 +1,26 @@
+{
+  "toggle": true,
+  "title": "${WEB_TITLE}",
+  "api": "${ZERO_CODE_API_BASE_URL}",
+  "customSecurity": {
+    "useCustomSecurity": true,
+    "baseUrl": "${CUSTOM_SECURITY_BASE_URL}",
+    "loginType": "url",
+    "loginEndpoint": "/oauth2/login",
+    "pingEndpoint": "/oauth2/ping",
+    "refreshEndpoint": "/oauth2/refresh",
+    "logOutEndpoint": "/oauth2/logout",
+    "sendTokenIn": "Params",
+    "tokenVariableName": "access_token",
+    "sessionInfoConfig": {
+      "jsonPathToToken": "$.settings.extraSettings.signedUserDetails.accessToken",
+      "jsonPathToUser": "$.settings.extraSettings.signedUserDetails.mail",
+      "jsonPathToName": "$.settings.extraSettings.signedUserDetails.displayName",
+      "jsonPathToRoles": "$.settings.extraSettings.signedUserDetails.businessUnits[?(@.identifier=='RadUI')].profiles[?(@.identifier=='RadUI')].roles[*].identifier"
+    },
+    "uiConfiguration": {
+      "type": "one-button",
+      "buttonText": "Login With Microsoft"
+    }
+  }
+}

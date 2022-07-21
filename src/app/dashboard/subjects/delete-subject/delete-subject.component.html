@@ -1,0 +1,26 @@
+<h2 mat-dialog-title>Delete Subject, {{ subject.identifier }}</h2>
+<div mat-dialog-content>
+  <div class="error-display" *ngIf="errorMessage">
+    <h5>{{ errorMessage }}</h5>
+  </div>
+  <p>Are you sure?</p>
+</div>
+<div align="end" mat-dialog-actions>
+  <button
+    (click)="closeDialog()"
+    type="button"
+    color="warn"
+    mat-stroked-button
+    [disabled]="dialogRef.disableClose"
+  >
+    Cancel</button
+  ><button
+    (click)="delete()"
+    type="button"
+    color="primary"
+    mat-flat-button
+    [disabled]="dialogRef.disableClose"
+  >
+    Delete
+  </button>
+</div>
