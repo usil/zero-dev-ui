@@ -1,0 +1,496 @@
+<div class="title-zc">
+  <h3 *ngIf="entity">Creating a field for {{ entity.name }}</h3>
+  <span class="spacer"></span>
+</div>
+<div class="error-display" *ngIf="errorMessage">
+  <h5>{{ errorMessage }}</h5>
+</div>
+<form
+  (ngSubmit)="createField(createFieldForm.value)"
+  [formGroup]="createFieldForm"
+  class="creation-forms"
+>
+  <mat-form-field class="span-6" appearance="fill">
+    <mat-label>Name</mat-label>
+    <input formControlName="name" matInput />
+    <mat-hint
+      >The field name, should be the column name in the database</mat-hint
+    >
+    <mat-error *ngIf="createFieldForm.get('name')?.invalid">{{
+      getErrorMessage("name")
+    }}</mat-error>
+  </mat-form-field>
+  <h4 class="span-6">Data Base Origin</h4>
+  <mat-form-field class="span-3" appearance="fill">
+    <mat-label>Variable Type</mat-label>
+    <input formControlName="variableType" matInput />
+    <mat-hint
+      >The field name, should be the column name in the database</mat-hint
+    >
+    <mat-error *ngIf="createFieldForm.get('variableType')?.invalid">{{
+      getErrorMessage("variableType")
+    }}</mat-error>
+  </mat-form-field>
+  <mat-form-field class="span-3" appearance="fill">
+    <mat-label>Variable Length</mat-label>
+    <input type="number" formControlName="variableLength" matInput />
+    <mat-hint
+      >The field name, should be the column name in the database</mat-hint
+    >
+    <mat-error *ngIf="createFieldForm.get('variableLength')?.invalid">{{
+      getErrorMessage("variableLength")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="span-3" appearance="fill">
+    <mat-label>Default Value</mat-label>
+    <input formControlName="defaultValue" matInput />
+    <mat-hint
+      >The field name, should be the column name in the database</mat-hint
+    >
+    <mat-error *ngIf="createFieldForm.get('defaultValue')?.invalid">{{
+      getErrorMessage("defaultValue")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="span-3" appearance="fill">
+    <mat-label>Comment</mat-label>
+    <textarea formControlName="comment" matInput></textarea>
+    <mat-hint
+      >The field name, should be the column name in the database</mat-hint
+    >
+    <mat-error *ngIf="createFieldForm.get('comment')?.invalid">{{
+      getErrorMessage("comment")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="span-3" appearance="fill">
+    <mat-label>Is nullable</mat-label>
+    <mat-select formControlName="isNullable">
+      <mat-option
+        *ngFor="let yesNoOption of yesNo"
+        [value]="yesNoOption.value"
+        >{{ yesNoOption.showValue }}</mat-option
+      >
+    </mat-select>
+    <mat-hint>Where to send the pagination info</mat-hint>
+    <mat-error *ngIf="createFieldForm.get('isNullable')?.invalid">{{
+      getErrorMessage("isNullable")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="span-3" appearance="fill">
+    <mat-label>Is a primary key</mat-label>
+    <mat-select formControlName="isPrimaryKey">
+      <mat-option
+        *ngFor="let yesNoOption of yesNo"
+        [value]="yesNoOption.value"
+        >{{ yesNoOption.showValue }}</mat-option
+      >
+    </mat-select>
+    <mat-hint>Where to send the pagination info</mat-hint>
+    <mat-error *ngIf="createFieldForm.get('isPrimaryKey')?.invalid">{{
+      getErrorMessage("isPrimaryKey")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="span-3" appearance="fill">
+    <mat-label>Is unsigned</mat-label>
+    <mat-select formControlName="isUnsigned">
+      <mat-option
+        *ngFor="let yesNoOption of yesNo"
+        [value]="yesNoOption.value"
+        >{{ yesNoOption.showValue }}</mat-option
+      >
+    </mat-select>
+    <mat-hint>Where to send the pagination info</mat-hint>
+    <mat-error *ngIf="createFieldForm.get('isUnsigned')?.invalid">{{
+      getErrorMessage("isUnsigned")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="span-3" appearance="fill">
+    <mat-label>Is unique</mat-label>
+    <mat-select formControlName="isUnique">
+      <mat-option
+        *ngFor="let yesNoOption of yesNo"
+        [value]="yesNoOption.value"
+        >{{ yesNoOption.showValue }}</mat-option
+      >
+    </mat-select>
+    <mat-hint>Where to send the pagination info</mat-hint>
+    <mat-error *ngIf="createFieldForm.get('isUnique')?.invalid">{{
+      getErrorMessage("isUnique")
+    }}</mat-error>
+  </mat-form-field>
+
+  <h5 class="span-6">Foreign relation</h5>
+
+  <mat-form-field class="span-6" appearance="fill">
+    <mat-label>Has a foreign relationship?</mat-label>
+    <mat-select formControlName="useForeignRelation">
+      <mat-option
+        *ngFor="let yesNoOption of yesNo"
+        [value]="yesNoOption.value"
+        >{{ yesNoOption.showValue }}</mat-option
+      >
+    </mat-select>
+    <mat-hint>Where to send the pagination info</mat-hint>
+    <mat-error *ngIf="createFieldForm.get('useForeignRelation')?.invalid">{{
+      getErrorMessage("useForeignRelation")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field
+    *ngIf="createFieldForm.get('useForeignRelation')?.value === 1"
+    class="span-6"
+    appearance="fill"
+  >
+    <mat-label>Relationship type</mat-label>
+    <mat-select formControlName="relationshipType">
+      <mat-option *ngFor="let type of relationshipTypes" [value]="type.value">{{
+        type.showValue
+      }}</mat-option>
+    </mat-select>
+    <mat-hint>Where to send the pagination info</mat-hint>
+    <mat-error *ngIf="createFieldForm.get('relationshipType')?.invalid">{{
+      getErrorMessage("relationshipType")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field
+    *ngIf="createFieldForm.get('useForeignRelation')?.value === 1"
+    class="span-3"
+    appearance="fill"
+  >
+    <mat-label>Foreign table name</mat-label>
+    <input formControlName="foreignTableName" matInput />
+    <mat-hint
+      >The field name, should be the column name in the database</mat-hint
+    >
+    <mat-error *ngIf="createFieldForm.get('foreignTableName')?.invalid">{{
+      getErrorMessage("foreignTableName")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field
+    *ngIf="createFieldForm.get('useForeignRelation')?.value === 1"
+    class="span-3"
+    appearance="fill"
+  >
+    <mat-label>Foreign field to show</mat-label>
+    <input formControlName="foreignFieldToShow" matInput />
+    <mat-hint
+      >The field name, should be the column name in the database</mat-hint
+    >
+    <mat-error *ngIf="createFieldForm.get('foreignFieldToShow')?.invalid">{{
+      getErrorMessage("foreignFieldToShow")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field
+    *ngIf="createFieldForm.get('useForeignRelation')?.value === 1"
+    class="span-6"
+    appearance="fill"
+  >
+    <mat-label>Foreign primary key</mat-label>
+    <input formControlName="foreignPrimaryKey" matInput />
+    <mat-hint
+      >The field name, should be the column name in the database</mat-hint
+    >
+    <mat-error *ngIf="createFieldForm.get('foreignPrimaryKey')?.invalid">{{
+      getErrorMessage("foreignPrimaryKey")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field
+    *ngIf="createFieldForm.get('useForeignRelation')?.value === 1"
+    class="span-6"
+    appearance="fill"
+  >
+    <mat-label>Show foreign form</mat-label>
+    <mat-select formControlName="showForeignForm">
+      <mat-option
+        *ngFor="let yesNoOption of yesNo"
+        [value]="yesNoOption.value"
+        >{{ yesNoOption.showValue }}</mat-option
+      >
+    </mat-select>
+    <mat-hint>Where to send the pagination info</mat-hint>
+    <mat-error *ngIf="createFieldForm.get('showForeignForm')?.invalid">{{
+      getErrorMessage("showForeignForm")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field
+    *ngIf="createFieldForm.get('useForeignRelation')?.value === 1"
+    class="span-3"
+    appearance="fill"
+  >
+    <mat-label>Intermediate table name</mat-label>
+    <input formControlName="intermediateTable" matInput />
+    <mat-hint
+      >The field name, should be the column name in the database</mat-hint
+    >
+    <mat-error *ngIf="createFieldForm.get('intermediateTable')?.invalid">{{
+      getErrorMessage("intermediateTable")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field
+    *ngIf="createFieldForm.get('useForeignRelation')?.value === 1"
+    class="span-3"
+    appearance="fill"
+  >
+    <mat-label>Intermediate primary key</mat-label>
+    <input formControlName="intermediatePrimaryKey" matInput />
+    <mat-hint
+      >The field name, should be the column name in the database</mat-hint
+    >
+    <mat-error *ngIf="createFieldForm.get('intermediatePrimaryKey')?.invalid">{{
+      getErrorMessage("intermediatePrimaryKey")
+    }}</mat-error>
+  </mat-form-field>
+
+  <h4 class="span-6">View list configuration</h4>
+
+  <mat-form-field class="span-3" appearance="fill">
+    <mat-label>Visible</mat-label>
+    <mat-select formControlName="visibleOnList">
+      <mat-option
+        *ngFor="let yesNoOption of yesNo"
+        [value]="yesNoOption.value"
+        >{{ yesNoOption.showValue }}</mat-option
+      >
+    </mat-select>
+    <mat-hint>Where to send the pagination info</mat-hint>
+    <mat-error *ngIf="createFieldForm.get('visibleOnList')?.invalid">{{
+      getErrorMessage("visibleOnList")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="span-3" appearance="fill">
+    <mat-label>Alias</mat-label>
+    <input formControlName="alias" matInput />
+    <mat-hint
+      >The field name, should be the column name in the database</mat-hint
+    >
+    <mat-error *ngIf="createFieldForm.get('alias')?.invalid">{{
+      getErrorMessage("alias")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="span-6" appearance="fill">
+    <mat-label>StereoType on list</mat-label>
+    <input formControlName="stereoTypeOnList" matInput />
+    <mat-hint
+      >The field name, should be the column name in the database</mat-hint
+    >
+    <mat-error *ngIf="createFieldForm.get('stereoTypeOnList')?.invalid">{{
+      getErrorMessage("stereoTypeOnList")
+    }}</mat-error>
+  </mat-form-field>
+
+  <h5 class="span-6">Filter configuration</h5>
+
+  <mat-form-field class="span-3" appearance="fill">
+    <mat-label>Operations</mat-label>
+    <input formControlName="operations" matInput />
+    <mat-hint
+      >The field name, should be the column name in the database</mat-hint
+    >
+    <mat-error *ngIf="createFieldForm.get('operations')?.invalid">{{
+      getErrorMessage("operations")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="span-3" appearance="fill">
+    <mat-label>Default value</mat-label>
+    <input formControlName="defaultValueForFilter" matInput />
+    <mat-hint
+      >The field name, should be the column name in the database</mat-hint
+    >
+    <mat-error *ngIf="createFieldForm.get('defaultValueForFilter')?.invalid">{{
+      getErrorMessage("defaultValueForFilter")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="span-3" appearance="fill">
+    <mat-label>Editable</mat-label>
+    <mat-select formControlName="editable">
+      <mat-option
+        *ngFor="let yesNoOption of yesNo"
+        [value]="yesNoOption.value"
+        >{{ yesNoOption.showValue }}</mat-option
+      >
+    </mat-select>
+    <mat-hint>Where to send the pagination info</mat-hint>
+    <mat-error *ngIf="createFieldForm.get('editable')?.invalid">{{
+      getErrorMessage("editable")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="span-3" appearance="fill">
+    <mat-label>Disabled</mat-label>
+    <mat-select formControlName="disabledFilter">
+      <mat-option
+        *ngFor="let yesNoOption of yesNo"
+        [value]="yesNoOption.value"
+        >{{ yesNoOption.showValue }}</mat-option
+      >
+    </mat-select>
+    <mat-hint>Where to send the pagination info</mat-hint>
+    <mat-error *ngIf="createFieldForm.get('disabledFilter')?.invalid">{{
+      getErrorMessage("disabledFilter")
+    }}</mat-error>
+  </mat-form-field>
+
+  <h4 class="span-6">Visual input configuration</h4>
+
+  <mat-form-field class="span-3" appearance="fill">
+    <mat-label>Label</mat-label>
+    <input formControlName="label" matInput />
+    <mat-hint
+      >The field name, should be the column name in the database</mat-hint
+    >
+    <mat-error *ngIf="createFieldForm.get('label')?.invalid">{{
+      getErrorMessage("label")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="span-3" appearance="fill">
+    <mat-label>Use possible value from database</mat-label>
+    <mat-select formControlName="usePossibleValuesFromDatabase">
+      <mat-option
+        *ngFor="let yesNoOption of yesNo"
+        [value]="yesNoOption.value"
+        >{{ yesNoOption.showValue }}</mat-option
+      >
+    </mat-select>
+    <mat-hint>Where to send the pagination info</mat-hint>
+    <mat-error
+      *ngIf="createFieldForm.get('usePossibleValuesFromDatabase')?.invalid"
+      >{{ getErrorMessage("usePossibleValuesFromDatabase") }}</mat-error
+    >
+  </mat-form-field>
+
+  <mat-form-field class="span-6" appearance="fill">
+    <mat-label>Disable in input</mat-label>
+    <mat-select formControlName="disabledInInput">
+      <mat-option
+        *ngFor="let yesNoOption of yesNo"
+        [value]="yesNoOption.value"
+        >{{ yesNoOption.showValue }}</mat-option
+      >
+    </mat-select>
+    <mat-hint>Where to send the pagination info</mat-hint>
+    <mat-error *ngIf="createFieldForm.get('disabledInInput')?.invalid">{{
+      getErrorMessage("disabledInInput")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="span-3" appearance="fill">
+    <mat-label>Tooltip</mat-label>
+    <input formControlName="tooltip" matInput />
+    <mat-hint
+      >The field name, should be the column name in the database</mat-hint
+    >
+    <mat-error *ngIf="createFieldForm.get('tooltip')?.invalid">{{
+      getErrorMessage("tooltip")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="span-3" appearance="fill">
+    <mat-label>Default value</mat-label>
+    <input formControlName="defaultValueOnInput" matInput />
+    <mat-hint
+      >The field name, should be the column name in the database</mat-hint
+    >
+    <mat-error *ngIf="createFieldForm.get('defaultValueOnInput')?.invalid">{{
+      getErrorMessage("defaultValueOnInput")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="span-3" appearance="fill">
+    <mat-label>Show on create</mat-label>
+    <mat-select formControlName="onCreate">
+      <mat-option
+        *ngFor="let yesNoOption of yesNo"
+        [value]="yesNoOption.value"
+        >{{ yesNoOption.showValue }}</mat-option
+      >
+    </mat-select>
+    <mat-hint>Where to send the pagination info</mat-hint>
+    <mat-error *ngIf="createFieldForm.get('onCreate')?.invalid">{{
+      getErrorMessage("onCreate")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="span-3" appearance="fill">
+    <mat-label>Show on update</mat-label>
+    <mat-select formControlName="editableOnInput">
+      <mat-option
+        *ngFor="let yesNoOption of yesNo"
+        [value]="yesNoOption.value"
+        >{{ yesNoOption.showValue }}</mat-option
+      >
+    </mat-select>
+    <mat-hint>Where to send the pagination info</mat-hint>
+    <mat-error *ngIf="createFieldForm.get('editableOnInput')?.invalid">{{
+      getErrorMessage("editableOnInput")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="span-6" appearance="fill">
+    <mat-label>Advanced configuration</mat-label>
+    <textarea
+      #advancedConfiguration
+      (keydown)="tapKeyPressedInTextarea($event, advancedConfiguration)"
+      spellcheck="false"
+      [ngStyle]="{
+        height: '15rem',
+        'overflow-y': 'scroll',
+        resize: 'none',
+        'font-size': '18px'
+      }"
+      formControlName="validatorsConfiguration"
+      matInput
+    ></textarea>
+    <mat-hint>Json raw body to send</mat-hint>
+    <mat-error *ngIf="createFieldForm.get('advancedConfiguration')?.invalid">{{
+      getErrorMessage("advancedConfigurationv")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="span-6" appearance="fill">
+    <mat-label>Validators configuration</mat-label>
+    <textarea
+      #validatorsConfiguration
+      (keydown)="tapKeyPressedInTextarea($event, validatorsConfiguration)"
+      spellcheck="false"
+      [ngStyle]="{
+        height: '15rem',
+        'overflow-y': 'scroll',
+        resize: 'none',
+        'font-size': '18px'
+      }"
+      formControlName="validatorsConfiguration"
+      matInput
+    ></textarea>
+    <mat-hint>Json raw body to send</mat-hint>
+    <mat-error
+      *ngIf="createFieldForm.get('validatorsConfiguration')?.invalid"
+      >{{ getErrorMessage("validatorsConfiguration") }}</mat-error
+    >
+  </mat-form-field>
+
+  <button
+    [disabled]="createFieldForm.invalid || creating"
+    type="submit"
+    class="span-6"
+    color="accent"
+    mat-flat-button
+  >
+    Create Field
+  </button>
+</form>

@@ -24,6 +24,8 @@ import { EntitiesComponent } from './applications/entities/entities.component';
 import { CreateEntityComponent } from './applications/entities/create-entity/create-entity.component';
 import { DataOriginComponent } from './applications/entities/data-origin/data-origin.component';
 import { SubjectsComponent as EntitySubjectsComponent } from './applications/entities/subjects/subjects.component';
+import { CreateNewComponent } from './applications/fields/create-new/create-new.component';
+import { CreateNewFieldComponent } from './applications/fields/create-new-field/create-new-field.component';
 @NgModule({
   declarations: [
     DashboardComponent,
@@ -46,6 +48,8 @@ import { SubjectsComponent as EntitySubjectsComponent } from './applications/ent
     CreateEntityComponent,
     DataOriginComponent,
     EntitySubjectsComponent,
+    CreateNewComponent,
+    CreateNewFieldComponent,
   ],
   imports: [
     CommonModule,

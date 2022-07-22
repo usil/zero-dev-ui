@@ -1,1 +1,81 @@
-<p>fields works!</p>
+<div class="title-zc">
+  <h3 *ngIf="entity">{{ entity.name }} fields</h3>
+  <span class="spacer"></span>
+  <button (click)="goToNewField()" color="accent" mat-stroked-button>
+    New
+  </button>
+</div>
+<div class="error-display" *ngIf="errorMessage">
+  <h5>{{ errorMessage }}</h5>
+</div>
+<section class="show-table">
+  <div class="container-table mat-elevation-z8">
+    <div class="loading-shade" *ngIf="isLoadingResults">
+      <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+    </div>
+    <div class="example-table-container">
+      <table
+        mat-table
+        [dataSource]="fields"
+        class="user-table"
+        matSort
+        matSortActive="id"
+        matSortDisableClear
+        matSortDirection="asc"
+      >
+        <ng-container matColumnDef="id">
+          <th mat-sort-header mat-header-cell *matHeaderCellDef>id</th>
+          <td mat-cell *matCellDef="let row">{{ row.id }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Name</th>
+          <td mat-cell *matCellDef="let row">{{ row.name }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="dataOrigin">
+          <th mat-header-cell *matHeaderCellDef>Data Origin</th>
+          <td mat-cell *matCellDef="let row">
+            <button
+              (click)="viewDataOrigin(row)"
+              color="primary"
+              mat-stroked-button
+            >
+              View
+            </button>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="viewListConfig">
+          <th mat-header-cell *matHeaderCellDef>View List Configuration</th>
+          <td mat-cell *matCellDef="let row">
+            <button color="primary" mat-stroked-button>View</button>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="inputViewConfiguration">
+          <th mat-header-cell *matHeaderCellDef>Input Configuration</th>
+          <td mat-cell *matCellDef="let row">
+            <button color="primary" mat-stroked-button>View</button>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td class="actions" mat-cell *matCellDef="let row">
+            <button color="primary" mat-stroked-button>Edit</button>
+            <button color="warn" mat-stroked-button>Delete</button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
+
+    <mat-paginator
+      [length]="resultsLength"
+      [pageSize]="pageSize"
+    ></mat-paginator>
+  </div>
+</section>

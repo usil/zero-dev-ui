@@ -177,6 +177,10 @@ export class EntityService {
       .pipe(first());
   }
 
+  getEntity(id: number) {
+    return this.http.get<GetOneEntityResult>(this.entityApi + `/${id}`);
+  }
+
   createEntity(createEntityData: CreateEntityData, applicationId: number) {
     return this.http
       .post<PostEntityResult>(this.entityApi, {
@@ -535,6 +539,11 @@ export interface Entity {
   id?: number;
   name: string;
   icon: string;
+  applicationId?: number;
+  disableExcelExport?: boolean;
+  disableReport?: boolean;
+  useSteps?: number;
+  viewListType?: string;
 }
 
 interface PostEntityResult {
@@ -564,4 +573,10 @@ export interface DataOrigin {
     oauth2HttpConfig?: AxiosRequestConfig;
     queryHttpConfig?: AxiosRequestConfig;
   };
+}
+
+interface GetOneEntityResult {
+  message: string;
+  code: number;
+  content: Entity;
 }

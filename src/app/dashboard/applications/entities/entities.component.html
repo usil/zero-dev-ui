@@ -74,7 +74,13 @@
         <ng-container matColumnDef="fields">
           <th mat-header-cell *matHeaderCellDef>Fields</th>
           <td mat-cell *matCellDef="let row">
-            <button color="primary" mat-stroked-button>View</button>
+            <button
+              (click)="goToEntityFields(row)"
+              color="primary"
+              mat-stroked-button
+            >
+              View
+            </button>
           </td>
         </ng-container>
 

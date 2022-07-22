@@ -157,6 +157,12 @@ export class EntitiesComponent implements OnInit, OnDestroy {
       });
   }
 
+  goToEntityFields(entity: Entity) {
+    this.router.navigate([
+      `/dashboard/application/${this.applicationId}/entity/${entity.id}/fields`,
+    ]);
+  }
+
   viewSubjects(entity: Entity) {
     const subjectsDialog = this.dialog.open(SubjectsComponent, {
       width: '600px',

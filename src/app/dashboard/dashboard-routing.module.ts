@@ -1,3 +1,5 @@
+import { CreateNewFieldComponent } from './applications/fields/create-new-field/create-new-field.component';
+import { FieldsComponent } from './applications/fields/fields.component';
 import { CreateEntityComponent } from './applications/entities/create-entity/create-entity.component';
 import { EntitiesComponent } from './applications/entities/entities.component';
 import { SubjectsComponent } from './subjects/subjects.component';
@@ -57,6 +59,14 @@ const routes: Routes = [
       {
         path: 'application/:id/entities/new',
         component: CreateEntityComponent,
+      },
+      {
+        path: 'application/:applicationId/entity/:entityId/fields',
+        component: FieldsComponent,
+      },
+      {
+        path: 'application/:applicationId/entity/:entityId/fields/new',
+        component: CreateNewFieldComponent,
       },
       { path: 'subjects', component: SubjectsComponent },
       {
