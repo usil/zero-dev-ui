@@ -1,13 +1,16 @@
+import { FieldsService } from './../fields.service';
 import { Subscription } from 'rxjs';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import {
   AbstractControl,
+  FormArray,
   FormBuilder,
   FormGroup,
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Entity, EntityService } from '../../entities/entity.service';
+import { FormFieldDataRaw } from '../fields.service';
 
 @Component({
   selector: 'app-create-new-field',
@@ -22,7 +25,9 @@ export class CreateNewFieldComponent implements OnInit, OnDestroy {
   createFieldForm: FormGroup;
   creating = false;
   useForeignRelation$: Subscription;
+  usePossibleValuesFromDatabase$: Subscription;
   relationShipType$: Subscription;
+  possibleValuesFormArray: FormArray;
 
   yesNo = [
     { value: 0, showValue: 'No' },
@@ -35,11 +40,19 @@ export class CreateNewFieldComponent implements OnInit, OnDestroy {
     { value: 'many-to-many', showValue: 'many-to-many' },
   ];
 
+  inputTypes = [
+    { value: 'text', showValue: 'Text' },
+    { value: 'textarea', showValue: 'Text Area' },
+    { value: 'select', showValue: 'Select' },
+    { value: 'datepicker', showValue: 'Datepicker' },
+  ];
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private entityService: EntityService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private fieldService: FieldsService
   ) {
     const params = this.activatedRoute.snapshot.params as {
       applicationId: string;
@@ -296,7 +309,32 @@ export class CreateNewFieldComponent implements OnInit, OnDestroy {
         value: this.yesNo[1].value,
         disabled: false,
       }),
+      typeOnInput: this.formBuilder.control({
+        value: this.inputTypes[0].value,
+        disabled: false,
+      }),
+      possibleValues: this.formBuilder.array([]),
     });
+
+    this.possibleValuesFormArray = this.createFieldForm.get(
+      'possibleValues'
+    ) as FormArray;
+
+    this.addPossibleValue(true);
+
+    this.usePossibleValuesFromDatabase$ = this.createFieldForm
+      .get('usePossibleValuesFromDatabase')
+      ?.valueChanges.subscribe((value: number) => {
+        for (const control of this.possibleValuesFormArray.controls) {
+          if (value === 1) {
+            control.get('value')?.disable();
+            control.get('displayValue')?.disable();
+          } else {
+            control.get('value')?.enable();
+            control.get('displayValue')?.enable();
+          }
+        }
+      }) as Subscription;
 
     this.useForeignRelation$ = this.createFieldForm
       .get('useForeignRelation')
@@ -346,6 +384,7 @@ export class CreateNewFieldComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.relationShipType$?.unsubscribe();
     this.useForeignRelation$?.unsubscribe();
+    this.usePossibleValuesFromDatabase$?.unsubscribe();
   }
 
   jsonParseValidator(control: AbstractControl) {
@@ -394,7 +433,72 @@ export class CreateNewFieldComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {}
 
-  createField(formData: any) {
-    console.log(formData);
+  addPossibleValue(setInvalid = false) {
+    const baseFormGroup = this.formBuilder.group({
+      value: this.formBuilder.control(
+        { value: '', disabled: setInvalid },
+        Validators.compose([Validators.required])
+      ),
+      displayValue: this.formBuilder.control(
+        { value: '', disabled: setInvalid },
+        Validators.compose([Validators.required])
+      ),
+    });
+    this.possibleValuesFormArray.push(baseFormGroup);
+  }
+
+  removePossibleValue(groupIndex: number) {
+    this.possibleValuesFormArray.removeAt(groupIndex);
+  }
+
+  disablePostCreate() {
+    if (
+      this.createFieldForm.get('usePossibleValuesFromDatabase')?.value === 1
+    ) {
+      for (const control of this.possibleValuesFormArray.controls) {
+        control.get('value')?.disable();
+        control.get('displayValue')?.disable();
+      }
+    }
+
+    if (this.createFieldForm.get('useForeignRelation')?.value === 1) {
+      this.createFieldForm.get('value')?.disable();
+      this.createFieldForm.get('displayValue')?.disable();
+      if (
+        this.createFieldForm.get('relationshipType')?.value !== 'many-to-many'
+      ) {
+        this.createFieldForm.get('value')?.disable();
+        this.createFieldForm.get('displayValue')?.disable();
+      }
+    }
+  }
+
+  createField(formData: FormFieldDataRaw) {
+    this.creating = true;
+    this.createFieldForm.disable();
+    this.fieldService
+      .createDataBaseOrigin(formData, this.entity.id as number)
+      .subscribe({
+        error: (err) => {
+          this.creating = false;
+          this.createFieldForm.enable();
+          if (err.error) {
+            this.errorMessage = err.error.message;
+          } else {
+            this.errorMessage = 'Unknown Error';
+          }
+        },
+        next: (res: any) => {
+          this.creating = false;
+          if (res.dataListConfig && res.dataInputConfig) {
+            this.router.navigate([
+              `/dashboard/application/${this.applicationId}/entity/${this.entityId}/fields`,
+            ]);
+          } else {
+            this.createFieldForm.enable();
+            this.errorMessage = 'Unknown Error.';
+          }
+        },
+      });
   }
 }

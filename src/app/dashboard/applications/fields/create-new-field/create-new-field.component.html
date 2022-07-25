@@ -347,7 +347,22 @@
 
   <h4 class="span-6">Visual input configuration</h4>
 
-  <mat-form-field class="span-3" appearance="fill">
+  <mat-form-field class="span-6" appearance="fill">
+    <mat-label>Input type</mat-label>
+    <mat-select formControlName="typeOnInput">
+      <mat-option
+        *ngFor="let inputType of inputTypes"
+        [value]="inputType.value"
+        >{{ inputType.showValue }}</mat-option
+      >
+    </mat-select>
+    <mat-hint>The input type</mat-hint>
+    <mat-error *ngIf="createFieldForm.get('typeOnInput')?.invalid">{{
+      getErrorMessage("typeOnInput")
+    }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="span-6" appearance="fill">
     <mat-label>Label</mat-label>
     <input formControlName="label" matInput />
     <mat-hint
@@ -356,22 +371,6 @@
     <mat-error *ngIf="createFieldForm.get('label')?.invalid">{{
       getErrorMessage("label")
     }}</mat-error>
-  </mat-form-field>
-
-  <mat-form-field class="span-3" appearance="fill">
-    <mat-label>Use possible value from database</mat-label>
-    <mat-select formControlName="usePossibleValuesFromDatabase">
-      <mat-option
-        *ngFor="let yesNoOption of yesNo"
-        [value]="yesNoOption.value"
-        >{{ yesNoOption.showValue }}</mat-option
-      >
-    </mat-select>
-    <mat-hint>Where to send the pagination info</mat-hint>
-    <mat-error
-      *ngIf="createFieldForm.get('usePossibleValuesFromDatabase')?.invalid"
-      >{{ getErrorMessage("usePossibleValuesFromDatabase") }}</mat-error
-    >
   </mat-form-field>
 
   <mat-form-field class="span-6" appearance="fill">
@@ -440,6 +439,67 @@
       getErrorMessage("editableOnInput")
     }}</mat-error>
   </mat-form-field>
+
+  <mat-form-field class="span-6" appearance="fill">
+    <mat-label>Use possible value from database</mat-label>
+    <mat-select formControlName="usePossibleValuesFromDatabase">
+      <mat-option
+        *ngFor="let yesNoOption of yesNo"
+        [value]="yesNoOption.value"
+        >{{ yesNoOption.showValue }}</mat-option
+      >
+    </mat-select>
+    <mat-hint>Where to send the pagination info</mat-hint>
+    <mat-error
+      *ngIf="createFieldForm.get('usePossibleValuesFromDatabase')?.invalid"
+      >{{ getErrorMessage("usePossibleValuesFromDatabase") }}</mat-error
+    >
+  </mat-form-field>
+
+  <div
+    *ngIf="createFieldForm.get('usePossibleValuesFromDatabase')?.value === 0"
+    formArrayName="possibleValues"
+    class="span-6"
+  >
+    <div
+      *ngFor="let sub of possibleValuesFormArray.controls; index as i"
+      textIndex="i"
+    >
+      <div class="key-value-form" [formGroupName]="i">
+        <mat-form-field appearance="fill">
+          <mat-label>Value</mat-label>
+          <input formControlName="value" matInput />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Display value</mat-label>
+          <input formControlName="displayValue" matInput />
+        </mat-form-field>
+
+        <button
+          (click)="removePossibleValue(i)"
+          class="remove-btn"
+          color="warn"
+          mat-flat-button
+          type="button"
+          [disabled]="possibleValuesFormArray.length === 1"
+        >
+          Remove
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <button
+    *ngIf="createFieldForm.get('usePossibleValuesFromDatabase')?.value === 0"
+    (click)="addPossibleValue()"
+    type="button"
+    color="primary"
+    mat-stroked-button
+    class="span-6"
+  >
+    Add Possible Value
+  </button>
 
   <mat-form-field class="span-6" appearance="fill">
     <mat-label>Advanced configuration</mat-label>
