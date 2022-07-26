@@ -14,6 +14,7 @@ export class EntityService {
   entityDataOriginApi = environment.api + '/api/entity_data_origin';
   externalOriginApi = environment.api + '/api/external_origin';
   externalPaginationApi = environment.api + '/api/pagination_config';
+  createTableApi = environment.api + '/api/zero-code/table';
 
   constructor(private http: HttpClient) {}
 
@@ -208,8 +209,26 @@ export class EntityService {
             });
           }
           return of(null);
+        }),
+        mergeMap((res) => {
+          console.log(res);
+          return this.createTable(createEntityData.name, {});
         })
       );
+  }
+
+  createTable(
+    tableName: string,
+    columns: Record<string, TableCreationColumn>,
+    primaryKey = 'id'
+  ) {
+    return this.http
+      .post(this.createTableApi, {
+        tableName,
+        columns,
+        primaryKey,
+      })
+      .pipe(first());
   }
 
   createDataOrigin(createEntityData: CreateEntityData, entityId: number) {
@@ -579,4 +598,20 @@ interface GetOneEntityResult {
   message: string;
   code: number;
   content: Entity;
+}
+
+interface TableCreationColumn {
+  type: string;
+  length?: number;
+  isNotNullable?: boolean;
+  isUnique?: boolean;
+  isUnsigned?: boolean;
+  comment?: string;
+  defaultValue?: number | string;
+  reference?: Reference;
+}
+
+interface Reference {
+  table: string;
+  column: string;
 }

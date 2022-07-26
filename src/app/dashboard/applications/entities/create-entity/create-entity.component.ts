@@ -393,7 +393,7 @@ export class CreateEntityComponent {
         },
         next: (res: any) => {
           this.creating = false;
-          if (res.dataOrigin && res.subjects) {
+          if (res.message === 'Sql Executed') {
             this.router.navigate([
               `/dashboard/application/${this.applicationId}/entities`,
             ]);

@@ -1,4 +1,4 @@
-import { DataOrigin } from './../entities/entity.service';
+import { DataOrigin, Entity } from './../entities/entity.service';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, first, mergeMap, of, forkJoin } from 'rxjs';
@@ -20,13 +20,15 @@ export class FieldsService {
 
   possibleValuesApi = environment.api + '/api/possible_value';
 
+  rawApi = environment.api + '/api/zero-code/raw-query';
+
   constructor(private http: HttpClient) {}
 
   // createField(createFieldData: FormFieldDataRaw, entityId: number) {
   //   return this.http.post(this.fieldApi, )
   // }
 
-  createDataBaseOrigin(createFieldData: FormFieldDataRaw, entityId: number) {
+  createDataBaseOrigin(createFieldData: FormFieldDataRaw, entity: Entity) {
     return this.http
       .post<PostCreateResult>(this.dataBaseOriginApi, {
         inserts: [
@@ -53,11 +55,11 @@ export class FieldsService {
             if (createFieldData.useForeignRelation) {
               return this.createForeignRelationShip(
                 createFieldData,
-                entityId,
+                entity,
                 res.content[0]
               );
             }
-            return this.createField(createFieldData, entityId, res.content[0]);
+            return this.createField(createFieldData, entity, res.content[0]);
           }
           return of(null);
         })
@@ -66,7 +68,7 @@ export class FieldsService {
 
   createForeignRelationShip(
     createFieldData: FormFieldDataRaw,
-    entityId: number,
+    entity: Entity,
     dataOriginId: number
   ) {
     return this.http
@@ -89,7 +91,7 @@ export class FieldsService {
           if (res.content && res.content.length === 1) {
             return this.updateDatabaseOrigin(
               createFieldData,
-              entityId,
+              entity,
               dataOriginId,
               res.content[0]
             );
@@ -101,7 +103,7 @@ export class FieldsService {
 
   updateDatabaseOrigin(
     createFieldData: FormFieldDataRaw,
-    entityId: number,
+    entity: Entity,
     dataOriginId: number,
     foreignRelationId: number
   ) {
@@ -113,7 +115,7 @@ export class FieldsService {
         first(),
         mergeMap((res: any) => {
           if (res.content) {
-            return this.createField(createFieldData, entityId, dataOriginId);
+            return this.createField(createFieldData, entity, dataOriginId);
           }
           return of(null);
         })
@@ -122,14 +124,14 @@ export class FieldsService {
 
   createField(
     createFieldData: FormFieldDataRaw,
-    entityId: number,
+    entity: Entity,
     dataOriginId: number
   ) {
     return this.http
       .post<PostCreateResult>(this.fieldApi, {
         inserts: [
           {
-            entityId,
+            entityId: entity.id as number,
             dataBaseOriginId: dataOriginId,
             name: createFieldData.name,
           },
@@ -148,11 +150,50 @@ export class FieldsService {
                 createFieldData,
                 res.content[0]
               ),
-            });
+            }).pipe(first());
           }
           return of(null);
+        }),
+        mergeMap((res) => {
+          console.log(res);
+          let variableLength = '';
+          if ((createFieldData.variableLength as any as string) !== '') {
+            variableLength = `(${createFieldData.variableLength})`;
+          }
+          let notNull = '';
+          if (!createFieldData.isNullable) {
+            notNull = 'NOT NULL';
+          }
+          let unique = '';
+          if (createFieldData.isUnique) {
+            unique = 'UNIQUE';
+          }
+          let unsigned = '';
+          if (createFieldData.isUnsigned) {
+            unsigned = 'UNSIGNED';
+          }
+          let foreignQuery = '';
+          if (createFieldData.useForeignRelation) {
+            foreignQuery = `ADD CONSTRAINT FK_${entity.name}_${createFieldData.foreignTableName}
+            ADD FOREIGN KEY (${createFieldData.name}) REFERENCES ${createFieldData.foreignTableName}(${createFieldData.foreignPrimaryKey})`;
+          }
+          let defaultValue = '';
+          if (createFieldData.defaultValue !== '') {
+            defaultValue = `DEFAULT '${createFieldData.defaultValue}'`;
+          }
+          let comment = '';
+          if (createFieldData.comment !== '') {
+            comment = `COMMENT '${createFieldData.comment}'`;
+          }
+          return this.executeRawQuery(
+            `ALTER TABLE ${entity.name} ADD COLUMN ${createFieldData.name} ${createFieldData.variableType}${variableLength} ${unique} ${notNull} ${unsigned} ${defaultValue} ${comment} ${foreignQuery};`
+          );
         })
       );
+  }
+
+  executeRawQuery(dbQuery: string) {
+    return this.http.post(this.rawApi, { dbQuery }).pipe(first());
   }
 
   createFieldListConfiguration(

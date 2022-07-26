@@ -476,29 +476,27 @@ export class CreateNewFieldComponent implements OnInit, OnDestroy {
   createField(formData: FormFieldDataRaw) {
     this.creating = true;
     this.createFieldForm.disable();
-    this.fieldService
-      .createDataBaseOrigin(formData, this.entity.id as number)
-      .subscribe({
-        error: (err) => {
-          this.creating = false;
+    this.fieldService.createDataBaseOrigin(formData, this.entity).subscribe({
+      error: (err) => {
+        this.creating = false;
+        this.createFieldForm.enable();
+        if (err.error) {
+          this.errorMessage = err.error.message;
+        } else {
+          this.errorMessage = 'Unknown Error';
+        }
+      },
+      next: (res: any) => {
+        this.creating = false;
+        if (res.message === 'Raw query executed') {
+          this.router.navigate([
+            `/dashboard/application/${this.applicationId}/entity/${this.entityId}/fields`,
+          ]);
+        } else {
           this.createFieldForm.enable();
-          if (err.error) {
-            this.errorMessage = err.error.message;
-          } else {
-            this.errorMessage = 'Unknown Error';
-          }
-        },
-        next: (res: any) => {
-          this.creating = false;
-          if (res.dataListConfig && res.dataInputConfig) {
-            this.router.navigate([
-              `/dashboard/application/${this.applicationId}/entity/${this.entityId}/fields`,
-            ]);
-          } else {
-            this.createFieldForm.enable();
-            this.errorMessage = 'Unknown Error.';
-          }
-        },
-      });
+          this.errorMessage = 'Unknown Error.';
+        }
+      },
+    });
   }
 }
