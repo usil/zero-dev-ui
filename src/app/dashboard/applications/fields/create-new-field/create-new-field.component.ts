@@ -83,7 +83,7 @@ export class CreateNewFieldComponent implements OnInit, OnDestroy {
       comment: this.formBuilder.control(
         { value: '', disabled: false },
         Validators.compose([
-          Validators.pattern(/^[a-zA-Z0-9_\.\-\/]+$/),
+          Validators.pattern(/^[a-zA-Z0-9_\.\-\/ ]+$/),
           Validators.minLength(2),
           Validators.maxLength(155),
         ])
@@ -102,7 +102,7 @@ export class CreateNewFieldComponent implements OnInit, OnDestroy {
       }),
       isPrimaryKey: this.formBuilder.control({
         value: this.yesNo[0].value,
-        disabled: false,
+        disabled: true,
       }),
       isUnsigned: this.formBuilder.control({
         value: this.yesNo[0].value,
@@ -452,6 +452,8 @@ export class CreateNewFieldComponent implements OnInit, OnDestroy {
   }
 
   disablePostCreate() {
+    this.createFieldForm.get('isPrimaryKey')?.disable();
+
     if (
       this.createFieldForm.get('usePossibleValuesFromDatabase')?.value === 1
     ) {
@@ -480,6 +482,7 @@ export class CreateNewFieldComponent implements OnInit, OnDestroy {
       error: (err) => {
         this.creating = false;
         this.createFieldForm.enable();
+        this.disablePostCreate();
         if (err.error) {
           this.errorMessage = err.error.message;
         } else {
@@ -494,6 +497,7 @@ export class CreateNewFieldComponent implements OnInit, OnDestroy {
           ]);
         } else {
           this.createFieldForm.enable();
+          this.disablePostCreate();
           this.errorMessage = 'Unknown Error.';
         }
       },

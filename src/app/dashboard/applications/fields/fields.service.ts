@@ -154,8 +154,7 @@ export class FieldsService {
           }
           return of(null);
         }),
-        mergeMap((res) => {
-          console.log(res);
+        mergeMap(() => {
           let variableLength = '';
           if ((createFieldData.variableLength as any as string) !== '') {
             variableLength = `(${createFieldData.variableLength})`;

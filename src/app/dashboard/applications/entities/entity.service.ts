@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AxiosRequestConfig } from 'axios';
 import { environment } from 'src/environments/environment';
-import { Observable, first, map, mergeMap, of, forkJoin } from 'rxjs';
+import { Observable, first, map, mergeMap, of, forkJoin, mapTo } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +15,8 @@ export class EntityService {
   externalOriginApi = environment.api + '/api/external_origin';
   externalPaginationApi = environment.api + '/api/pagination_config';
   createTableApi = environment.api + '/api/zero-code/table';
+  refreshEPEndpoint = environment.api + '/api/zero-code/refresh';
+  fieldApi = environment.api + '/api/field';
 
   constructor(private http: HttpClient) {}
 
@@ -183,6 +185,7 @@ export class EntityService {
   }
 
   createEntity(createEntityData: CreateEntityData, applicationId: number) {
+    let entityId = 0;
     return this.http
       .post<PostEntityResult>(this.entityApi, {
         inserts: [
@@ -197,6 +200,7 @@ export class EntityService {
         first(),
         mergeMap((res) => {
           if (res.content && res.content.length === 1) {
+            entityId = res.content[0];
             return forkJoin({
               subjects: this.createSubjectEntityRelationship(
                 createEntityData.subjects_crud,
@@ -210,9 +214,13 @@ export class EntityService {
           }
           return of(null);
         }),
-        mergeMap((res) => {
-          console.log(res);
-          return this.createTable(createEntityData.name, {});
+        mergeMap((res: any) => {
+          return this.createTable(
+            createEntityData.name,
+            {},
+            entityId,
+            res.dataOrigin.content[0] as number
+          );
         })
       );
   }
@@ -220,6 +228,8 @@ export class EntityService {
   createTable(
     tableName: string,
     columns: Record<string, TableCreationColumn>,
+    entityId: number,
+    dataOriginId: number,
     primaryKey = 'id'
   ) {
     return this.http
@@ -227,6 +237,32 @@ export class EntityService {
         tableName,
         columns,
         primaryKey,
+      })
+      .pipe(
+        first(),
+        mergeMap(() => {
+          return forkJoin({
+            callRefreshEPEndpoint: this.callRefreshEPEndpoint(),
+            createIdField: this.createIdField(entityId, dataOriginId),
+          });
+        })
+      );
+  }
+
+  callRefreshEPEndpoint() {
+    return this.http.post(this.refreshEPEndpoint, {}).pipe(first());
+  }
+
+  createIdField(entityId: number, dataBaseOriginId: number) {
+    return this.http
+      .post<PostCreateResult>(this.fieldApi, {
+        inserts: [
+          {
+            entityId,
+            dataBaseOriginId,
+            name: 'id',
+          },
+        ],
       })
       .pipe(first());
   }
@@ -302,7 +338,8 @@ export class EntityService {
           if (res.content && res.content.length === 1) {
             return this.createExternalPagination(
               createEntityData,
-              res.content[0]
+              res.content[0],
+              entityDataOriginId
             );
           }
           return of(null);
@@ -360,7 +397,8 @@ export class EntityService {
 
   createExternalPagination(
     createEntityData: CreateEntityData,
-    externalOriginId: number
+    externalOriginId: number,
+    entityDataOriginId: number
   ) {
     return this.http
       .post(this.externalPaginationApi, {
@@ -374,7 +412,12 @@ export class EntityService {
           },
         ],
       })
-      .pipe(first());
+      .pipe(
+        first(),
+        mapTo({
+          content: [entityDataOriginId],
+        })
+      );
   }
 
   createSubjectEntityRelationshipFromUpdate(
@@ -614,4 +657,10 @@ interface TableCreationColumn {
 interface Reference {
   table: string;
   column: string;
+}
+
+interface PostCreateResult {
+  message: string;
+  code: number;
+  content?: number[];
 }

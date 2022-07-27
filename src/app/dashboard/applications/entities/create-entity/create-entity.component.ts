@@ -393,7 +393,10 @@ export class CreateEntityComponent {
         },
         next: (res: any) => {
           this.creating = false;
-          if (res.message === 'Sql Executed') {
+          if (
+            res.callRefreshEPEndpoint &&
+            res.callRefreshEPEndpoint.message === 'Endpoints refreshed'
+          ) {
             this.router.navigate([
               `/dashboard/application/${this.applicationId}/entities`,
             ]);

@@ -39,6 +39,10 @@ export class LoginService {
   }
 
   logOut() {
+    if (this.customSecurity.useCustomSecurity) {
+      this.logOutCustomSecurity();
+      return;
+    }
     localStorage.removeItem('name');
     localStorage.removeItem('username');
     localStorage.removeItem('jwt_token');
