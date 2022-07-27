@@ -33,7 +33,7 @@ export class LoginService {
 
   logOutCustomSecurity() {
     const logOutUrl =
-      this.customSecurity.baseUrl + this.customSecurity.loginEndpoint;
+      this.customSecurity.baseUrl + this.customSecurity.logOutEndpoint;
 
     window.location.href = logOutUrl;
   }

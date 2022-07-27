@@ -14,6 +14,7 @@ export const environment: {
     baseUrl: string;
     loginType: string;
     loginEndpoint: string;
+    logOutEndpoint: string;
     pingEndpoint: string;
     refreshEndpoint: string;
     sendTokenIn: string;
@@ -40,6 +41,7 @@ export const environment: {
     loginEndpoint: '',
     pingEndpoint: '',
     refreshEndpoint: '',
+    logOutEndpoint: '',
     sendTokenIn: '',
     tokenVariableName: '',
     sessionInfoConfig: {
