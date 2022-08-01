@@ -14,7 +14,7 @@ export class FieldsService {
   fieldListConfigurationApi =
     environment.api + '/api/fields_list_configuration';
   fieldInputConfigurationApi =
-    environment.api + '/api/field_input_configuration';
+    environment.api + '/api/field_visual_configuration';
 
   filterConfigurationApi = environment.api + '/api/filter_configuration';
 
