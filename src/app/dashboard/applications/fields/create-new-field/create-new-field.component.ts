@@ -147,7 +147,6 @@ export class CreateNewFieldComponent implements OnInit, OnDestroy {
         Validators.compose([
           Validators.required,
           Validators.pattern(/^[a-z::=><]+$/),
-          Validators.minLength(2),
           Validators.maxLength(45),
         ])
       ),
